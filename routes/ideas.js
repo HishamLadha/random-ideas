@@ -54,5 +54,51 @@ router.get('/:id', (req, res) => {
 
 });
 
+// Add a new idea through a post request
+router.post('/', (req, res) => {
+    const idea = {
+        id: ideas.length + 1,
+        text: req.body.text,
+        tag: req.body.tag,
+        username: req.body.username,
+        date: new Date().toISOString().slice(0,10),
+    };
+
+    ideas.push(idea);
+
+    res.json({ success: true, data: idea});
+});
+
+// Update single idea
+router.put('/:id', (req, res) => {
+    const idea = ideas.find((idea) => {
+        return idea.id === +req.params.id;
+    });
+    if(!idea) {
+        return res.status(404).json({ success: false, error: 'Resource not found'});
+    }
+
+    idea.text = req.body.text || idea.text;
+    idea.tag = req.body.tag || idea.tag;
+
+    res.json({ success: true, data: idea});
+
+});
+
+// Delete single idea
+router.delete('/:id', (req, res) => {
+    const idea = ideas.find((idea) => {
+        return idea.id === +req.params.id;
+    });
+    const ideaIndex = ideas.indexOf(idea);
+    if(!idea) {
+        return res.status(404).json({ success: false, error: 'Resource not found'});
+    }
+
+    ideas.splice(ideaIndex, 1);
+    res.json({ success: true, data: ideas});
+
+});
+
 
 module.exports = router;
